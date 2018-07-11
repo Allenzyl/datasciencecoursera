@@ -1,0 +1,59 @@
+---
+title: "Statistical Inference Project"
+output: word_document
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo = TRUE)
+```
+by Yilun Zhang
+
+## Overview
+In this project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations.
+
+
+## Part 1: Simulation Exercise
+1.Show the sample mean and compare it to the theoretical mean of the distribution. 
+
+2.Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+
+3.Show that the distribution is approximately normal.
+
+
+```{r}
+set.seed(1) 
+simData <- matrix(rexp(40 * 1000, rate = 0.2), 1000)
+simMeans <- rowMeans(simData)
+```
+## Sample Mean versus Theoretical Mean:
+```{r}
+sampleMean <- mean(simMeans)
+theoMean <- 1 / 0.2
+sampleMean
+theoMean
+```
+
+## Sample Variance versus Theoretical Variance:
+```{r}
+sampleVar <- var(simMeans)
+theoVar <- (1/0.2)^2/40
+sampleVar
+theoVar
+```
+
+
+## Distribution
+```{r}
+library(ggplot2 )
+sampleSD <- sd(simMeans)
+theoSD<- 1/(sqrt(40)*0.2)
+plotdata <- data.frame(simMeans)
+ggplot(plotdata, aes(x =simMeans)) +
+geom_histogram(aes(y=..density..), colour="black",fill = "lightblue")+
+labs(title = "Distribution of averages of 40 Samples", x = "Mean of 40 Samples", y = "Density")+
+stat_function(fun = dnorm, args = list(mean = sampleMean, sd = sampleSD), color = "blue", size = 1.0)+
+stat_function(fun = dnorm, args = list(mean = theoMean, sd = theoSD), colour = "red", size = 1.0)
+```
+
+The density of the actual data is shown by the light blue bars. The theoretical mean and the sample mean are so close that they overlap. The "red" line shows the normal curve formed by the the theoretical mean and standard deviation. The "blue" line shows the curve formed by the sample mean and standard deviation. So it seems to be normal distributed.
+
